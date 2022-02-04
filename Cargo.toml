@@ -1,0 +1,28 @@
+[package]
+name = "kanban"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rocket = "0.5.0-rc.1"
+# FIXME: use git version until new version...
+rocket_cors = { git = "https://github.com/lawliet89/rocket_cors", branch = "master" } # "0.5.2"
+rocket_sync_db_pools = { version = "0.1.0-rc.1", features = ["diesel_postgres_pool"] }
+futures = "0.3.17"
+
+diesel = { version = "1.4.8", features = ["postgres"] }
+diesel-derive-enum = { version = "1.1.1", features = ["postgres"] }
+diesel_migrations = "1.4.0"
+
+serde = { version = "1.0.130", features = ["derive"] }
+serde_json = "1.0.68"
+
+jsonwebtoken = "8.0.1"
+bcrypt = "0.10.1"
+
+juniper = "0.15.7"
+juniper_rocket = "0.8.0"
+
+lazy_static = "1.4.0"

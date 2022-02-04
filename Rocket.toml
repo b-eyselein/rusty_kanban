@@ -1,0 +1,6 @@
+[default]
+address = "0.0.0.0"
+port = 8018
+
+[default.databases]
+kanban = { url = "postgres://kanban:1234@localhost/kanban" }
