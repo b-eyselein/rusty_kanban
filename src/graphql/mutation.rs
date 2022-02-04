@@ -1,7 +1,7 @@
 use juniper::{graphql_object, FieldResult};
 
 use crate::graphql::{on_graphql_error, MyGraphQLContext};
-use crate::model::project::insert_project;
+use crate::model::project::{insert_project, select_project_by_id, ProjectMutations};
 
 pub struct Mutation;
 
@@ -12,6 +12,16 @@ impl Mutation {
             .connection
             .run(move |c| insert_project(c, &name))
             .await
-            .map_err(|error| on_graphql_error(error, "TODO!"))
+            .map_err(|error| on_graphql_error(error, "Could not create project!"))
+    }
+
+    pub async fn project_mutations(id: i32, context: &MyGraphQLContext) -> FieldResult<Option<ProjectMutations>> {
+        let project = context
+            .connection
+            .run(move |c| select_project_by_id(c, &id))
+            .await
+            .map_err(|error| on_graphql_error(error, &format!("Could not select project with id {id}!")))?;
+
+        Ok(project.map(ProjectMutations::new))
     }
 }
