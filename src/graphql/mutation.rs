@@ -22,6 +22,6 @@ impl Mutation {
             .await
             .map_err(|error| on_graphql_error(error, &format!("Could not select project with id {id}!")))?;
 
-        Ok(project.map(ProjectMutations::new))
+        Ok(project.map(|p| ProjectMutations(p)))
     }
 }

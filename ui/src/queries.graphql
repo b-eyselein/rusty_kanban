@@ -1,0 +1,20 @@
+# /
+query AllProjects {
+  projects {
+    id
+    name
+  }
+}
+
+mutation NewProject($name: String!) {
+  newProject(name: $name)
+}
+
+# /projects/:id
+
+query ProjectById($id: Int!) {
+  projectById(id: $id) {
+    id
+    name
+  }
+}

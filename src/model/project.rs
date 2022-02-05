@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use diesel::prelude::*;
 use juniper::{graphql_object, FieldResult};
 
@@ -33,20 +35,20 @@ impl Project {
     }
 }
 
-pub struct ProjectMutations {
-    project: Project,
-}
+pub struct ProjectMutations(pub Project);
 
-impl ProjectMutations {
-    pub fn new(project: Project) -> Self {
-        Self { project }
+impl Deref for ProjectMutations {
+    type Target = Project;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 
 #[graphql_object(Context = MyGraphQLContext)]
 impl ProjectMutations {
     pub async fn create_board(&self, name: String, context: &MyGraphQLContext) -> FieldResult<i32> {
-        let project_id = self.project.id;
+        let project_id = self.id;
 
         context
             .connection

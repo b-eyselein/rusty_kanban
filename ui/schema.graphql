@@ -1,0 +1,24 @@
+type Board {
+  id: Int!
+  name: String!
+}
+
+type Mutation {
+  newProject(name: String!): Int!
+  projectMutations(id: Int!): ProjectMutations
+}
+
+type Project {
+  boards: [Board!]!
+  id: Int!
+  name: String!
+}
+
+type ProjectMutations {
+  createBoard(name: String!): Int!
+}
+
+type Query {
+  projectById(id: Int!): Project
+  projects: [Project!]!
+}
