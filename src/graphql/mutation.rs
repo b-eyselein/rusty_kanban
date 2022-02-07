@@ -10,6 +10,7 @@ pub struct Mutation;
 #[graphql_object(Context = MyGraphQLContext)]
 impl Mutation {
     pub async fn create_project(title: String, context: &MyGraphQLContext) -> FieldResult<i32> {
+        // TODO: add default board?
         context
             .connection
             .run(move |c| insert_project(c, &title))

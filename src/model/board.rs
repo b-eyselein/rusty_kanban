@@ -10,7 +10,6 @@ use crate::model::slot::{insert_slot, select_slots_for_boards, Slot};
 pub struct Board {
     id: i32,
     title: String,
-    project_id: i32,
 }
 
 // GraphQL
@@ -26,12 +25,11 @@ impl Board {
     }
 
     pub async fn slots(&self, context: &MyGraphQLContext) -> FieldResult<Vec<Slot>> {
-        let project_id = self.project_id;
         let board_id = self.id;
 
         context
             .connection
-            .run(move |c| select_slots_for_boards(c, &project_id, &board_id))
+            .run(move |c| select_slots_for_boards(c, &board_id))
             .await
             .map_err(|error| on_graphql_error(error, "Could not select boards!"))
     }
@@ -50,12 +48,11 @@ impl Deref for BoardMutations {
 #[graphql_object(Context = MyGraphQLContext)]
 impl BoardMutations {
     pub async fn create_slot(&self, title: String, context: &MyGraphQLContext) -> FieldResult<i32> {
-        let project_id = self.project_id;
         let board_id = self.id;
 
         context
             .connection
-            .run(move |c| insert_slot(c, &project_id, &board_id, &title))
+            .run(move |c| insert_slot(c, &board_id, &title))
             .await
             .map_err(|error| on_graphql_error(error, "Could not insert slot!"))
     }
@@ -66,13 +63,13 @@ impl BoardMutations {
 pub fn select_boards_for_projects(conn: &PgConnection, the_project_id: &i32) -> QueryResult<Vec<Board>> {
     use crate::schema::boards::dsl::*;
 
-    boards.filter(project_id.eq(the_project_id)).load(conn)
+    boards.filter(project_id.eq(the_project_id)).select((id, title)).load(conn)
 }
 
 pub fn select_board_by_id(conn: &PgConnection, the_id: &i32) -> QueryResult<Option<Board>> {
     use crate::schema::boards::dsl::*;
 
-    boards.find(the_id).first(conn).optional()
+    boards.find(the_id).select((id, title)).first(conn).optional()
 }
 
 pub fn insert_board(conn: &PgConnection, the_project_id: &i32, the_title: &str) -> QueryResult<i32> {

@@ -76,11 +76,17 @@ export type Project = {
 export type ProjectMutations = {
   __typename?: 'ProjectMutations';
   createBoard: Scalars['Int'];
+  rename: Scalars['String'];
 };
 
 
 export type ProjectMutationsCreateBoardArgs = {
   title: Scalars['String'];
+};
+
+
+export type ProjectMutationsRenameArgs = {
+  newTitle: Scalars['String'];
 };
 
 export type Query = {

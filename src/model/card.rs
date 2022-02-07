@@ -7,10 +7,6 @@ pub struct Card {
     title: String,
     #[allow(dead_code)]
     slot_id: i32,
-    #[allow(dead_code)]
-    board_id: i32,
-    #[allow(dead_code)]
-    project_id: i32,
 }
 
 // GraphQL
@@ -34,16 +30,11 @@ pub fn select_cards_for_slot(conn: &PgConnection, the_slot_id: &i32) -> QueryRes
     cards.filter(slot_id.eq(the_slot_id)).load(conn)
 }
 
-pub fn insert_card(conn: &PgConnection, the_project_id: &i32, the_board_id: &i32, the_slot_id: &i32, the_title: &str) -> QueryResult<i32> {
+pub fn insert_card(conn: &PgConnection, the_slot_id: &i32, the_title: &str) -> QueryResult<i32> {
     use crate::schema::cards::dsl::*;
 
     diesel::insert_into(cards)
-        .values((
-            project_id.eq(the_project_id),
-            board_id.eq(the_board_id),
-            slot_id.eq(the_slot_id),
-            title.eq(the_title),
-        ))
+        .values((slot_id.eq(the_slot_id), title.eq(the_title)))
         .returning(id)
         .get_result(conn)
 }

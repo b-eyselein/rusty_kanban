@@ -10,8 +10,6 @@ use crate::model::card::{insert_card, select_cards_for_slot, Card};
 pub struct Slot {
     id: i32,
     title: String,
-    board_id: i32,
-    project_id: i32,
 }
 
 // GraphQL
@@ -50,13 +48,11 @@ impl Deref for SlotMutations {
 #[graphql_object(Context = MyGraphQLContext)]
 impl SlotMutations {
     pub async fn create_card(&self, title: String, context: &MyGraphQLContext) -> FieldResult<i32> {
-        let project_id = self.project_id;
-        let board_id = self.board_id;
         let slot_id = self.id;
 
         context
             .connection
-            .run(move |c| insert_card(c, &project_id, &board_id, &slot_id, &title))
+            .run(move |c| insert_card(c, &slot_id, &title))
             .await
             .map_err(|error| on_graphql_error(error, "Could not insert card!"))
     }
@@ -64,23 +60,23 @@ impl SlotMutations {
 
 // Queries
 
-pub fn select_slots_for_boards(conn: &PgConnection, the_project_id: &i32, the_board_id: &i32) -> QueryResult<Vec<Slot>> {
+pub fn select_slots_for_boards(conn: &PgConnection, the_board_id: &i32) -> QueryResult<Vec<Slot>> {
     use crate::schema::slots::dsl::*;
 
-    slots.filter(project_id.eq(the_project_id)).filter(board_id.eq(the_board_id)).load(conn)
+    slots.filter(board_id.eq(the_board_id)).select((id, title)).load(conn)
 }
 
 pub fn select_slot(conn: &PgConnection, the_slot_id: &i32) -> QueryResult<Option<Slot>> {
     use crate::schema::slots::dsl::*;
 
-    slots.find(the_slot_id).first(conn).optional()
+    slots.find(the_slot_id).select((id, title)).first(conn).optional()
 }
 
-pub fn insert_slot(conn: &PgConnection, the_project_id: &i32, the_board_id: &i32, the_title: &str) -> QueryResult<i32> {
+pub fn insert_slot(conn: &PgConnection, the_board_id: &i32, the_title: &str) -> QueryResult<i32> {
     use crate::schema::slots::dsl::*;
 
     diesel::insert_into(slots)
-        .values((project_id.eq(the_project_id), board_id.eq(the_board_id), title.eq(the_title)))
+        .values((board_id.eq(the_board_id), title.eq(the_title)))
         .returning(id)
         .get_result(conn)
 }

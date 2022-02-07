@@ -11,8 +11,6 @@ table! {
         id -> Int4,
         title -> Varchar,
         slot_id -> Int4,
-        board_id -> Int4,
-        project_id -> Int4,
     }
 }
 
@@ -28,7 +26,14 @@ table! {
         id -> Int4,
         title -> Varchar,
         board_id -> Int4,
-        project_id -> Int4,
+    }
+}
+
+table! {
+    tasks (id) {
+        id -> Int4,
+        content -> Varchar,
+        card_id -> Int4,
     }
 }
 
@@ -40,8 +45,8 @@ table! {
 }
 
 joinable!(boards -> projects (project_id));
-joinable!(cards -> boards (board_id));
-joinable!(cards -> projects (project_id));
-joinable!(slots -> projects (project_id));
+joinable!(cards -> slots (slot_id));
+joinable!(slots -> boards (board_id));
+joinable!(tasks -> cards (card_id));
 
-allow_tables_to_appear_in_same_query!(boards, cards, projects, slots, users,);
+allow_tables_to_appear_in_same_query!(boards, cards, projects, slots, tasks, users,);

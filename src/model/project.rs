@@ -56,6 +56,16 @@ impl ProjectMutations {
             .await
             .map_err(|error| on_graphql_error(error, "Could not create board!"))
     }
+
+    pub async fn rename(&self, new_title: String, context: &MyGraphQLContext) -> FieldResult<String> {
+        let project_id = self.id;
+
+        context
+            .connection
+            .run(move |c| update_project_title(c, &project_id, &new_title))
+            .await
+            .map_err(|error| on_graphql_error(error, "Could not update project title!"))
+    }
 }
 
 // Queries
@@ -76,4 +86,13 @@ pub fn insert_project(conn: &PgConnection, the_title: &str) -> QueryResult<i32> 
     use crate::schema::projects::dsl::*;
 
     diesel::insert_into(projects).values(title.eq(the_title)).returning(id).get_result(conn)
+}
+
+pub fn update_project_title(conn: &PgConnection, the_id: &i32, new_title: &str) -> QueryResult<String> {
+    use crate::schema::projects::dsl::*;
+
+    diesel::update(projects.filter(id.eq(the_id)))
+        .set(title.eq(new_title))
+        .returning(title)
+        .get_result(conn)
 }
