@@ -1,24 +1,46 @@
 type Board {
   id: Int!
-  name: String!
+  slots: [Slot!]!
+  title: String!
+}
+
+type BoardMutations {
+  createSlot(title: String!): Int!
+}
+
+type Card {
+  id: Int!
+  title: String!
 }
 
 type Mutation {
-  newProject(name: String!): Int!
+  boardMutations(id: Int!): BoardMutations
+  createProject(title: String!): Int!
   projectMutations(id: Int!): ProjectMutations
+  slotMutations(id: Int!): SlotMutations
 }
 
 type Project {
   boards: [Board!]!
   id: Int!
-  name: String!
+  title: String!
 }
 
 type ProjectMutations {
-  createBoard(name: String!): Int!
+  createBoard(title: String!): Int!
 }
 
 type Query {
   projectById(id: Int!): Project
   projects: [Project!]!
+}
+
+type Slot {
+  cards: [Card!]!
+  id: Int!
+  title: String!
+}
+
+type SlotMutations {
+  createCard(title: String!): Int!
 }

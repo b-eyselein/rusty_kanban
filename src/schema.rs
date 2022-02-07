@@ -1,7 +1,7 @@
 table! {
     boards (id) {
         id -> Int4,
-        name -> Varchar,
+        title -> Varchar,
         project_id -> Int4,
     }
 }
@@ -19,14 +19,14 @@ table! {
 table! {
     projects (id) {
         id -> Int4,
-        name -> Varchar,
+        title -> Varchar,
     }
 }
 
 table! {
     slots (id) {
         id -> Int4,
-        name -> Varchar,
+        title -> Varchar,
         board_id -> Int4,
         project_id -> Int4,
     }

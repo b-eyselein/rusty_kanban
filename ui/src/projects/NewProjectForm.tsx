@@ -1,29 +1,29 @@
 import {Field, Form, Formik} from 'formik';
 import {useTranslation} from 'react-i18next';
-import {NewProjectMutationVariables, useNewProjectMutation} from './graphql';
+import {CreateProjectMutationVariables, useCreateProjectMutation} from '../graphql';
 import * as yup from 'yup';
 import classNames from 'classnames';
 import {useNavigate} from 'react-router-dom';
 
-const initialValues: NewProjectMutationVariables = {name: ''};
+const initialValues: CreateProjectMutationVariables = {title: ''};
 
-const validationSchema: yup.SchemaOf<NewProjectMutationVariables> = yup.object()
+const validationSchema: yup.SchemaOf<CreateProjectMutationVariables> = yup.object()
   .shape({
-    name: yup.string().required()
+    title: yup.string().required()
   })
   .required();
 
 export function NewProjectForm(): JSX.Element {
 
-  const [createNewProject, {loading, error}] = useNewProjectMutation();
+  const [createProject, {loading, error}] = useCreateProjectMutation();
   const {t} = useTranslation('common');
   const navigate = useNavigate();
 
-  function onSubmit(variables: NewProjectMutationVariables): void {
-    createNewProject({variables})
+  function onSubmit(variables: CreateProjectMutationVariables): void {
+    createProject({variables})
       .then(({data}) => {
         if (data) {
-          navigate(`/projects/${data.newProject}`);
+          navigate(`/projects/${data.createProject}`);
         }
       })
       .catch((error) => console.error(error));
@@ -34,10 +34,10 @@ export function NewProjectForm(): JSX.Element {
       {({touched, errors}) => <Form>
 
         <div className="field">
-          <label htmlFor="name" className="label">{t('name')}:</label>
+          <label htmlFor="title" className="label">{t('title')}:</label>
           <div className="control">
-            <Field type="text" name="name" id="name" placeholder={t('name')}
-                   className={classNames('input', {'is-danger': touched.name && errors.name, 'is-success': touched.name && !errors.name})}/>
+            <Field type="text" name="title" id="title" placeholder={t('title')} autoFocus
+                   className={classNames('input', {'is-danger': touched.title && errors.title, 'is-success': touched.title && !errors.title})}/>
           </div>
         </div>
 

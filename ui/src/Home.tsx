@@ -4,7 +4,7 @@ import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import {AiOutlinePlus} from 'react-icons/ai';
 import {useState} from 'react';
-import {NewProjectForm} from './NewProjectForm';
+import {NewProjectForm} from './projects/NewProjectForm';
 import {BulmaModalCard} from './bulmaHelpers/modelCard';
 
 export function Home(): JSX.Element {
@@ -19,9 +19,9 @@ export function Home(): JSX.Element {
 
       <WithQuery query={allProjectsQuery}>
         {({projects}) => <div className="columns">
-          {projects.map(({id, name}) =>
+          {projects.map(({id, title}) =>
             <div className="column is-one-fifth-desktop" key={id}>
-              <Link className="button is-link is-fullwidth" to={`/projects/${id}`}>{name}</Link>
+              <Link className="button is-link is-fullwidth" to={`/projects/${id}`}>{title}</Link>
             </div>
           )}
 

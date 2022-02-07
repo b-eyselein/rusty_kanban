@@ -9,7 +9,7 @@ use crate::model::board::{insert_board, select_boards_for_projects, Board};
 #[derive(Debug, Queryable)]
 pub struct Project {
     id: i32,
-    name: String,
+    title: String,
 }
 
 // GraphQL
@@ -20,8 +20,8 @@ impl Project {
         &self.id
     }
 
-    pub fn name(&self) -> &String {
-        &self.name
+    pub fn title(&self) -> &String {
+        &self.title
     }
 
     pub async fn boards(&self, context: &MyGraphQLContext) -> FieldResult<Vec<Board>> {
@@ -47,12 +47,12 @@ impl Deref for ProjectMutations {
 
 #[graphql_object(Context = MyGraphQLContext)]
 impl ProjectMutations {
-    pub async fn create_board(&self, name: String, context: &MyGraphQLContext) -> FieldResult<i32> {
+    pub async fn create_board(&self, title: String, context: &MyGraphQLContext) -> FieldResult<i32> {
         let project_id = self.id;
 
         context
             .connection
-            .run(move |c| insert_board(c, &project_id, &name))
+            .run(move |c| insert_board(c, &project_id, &title))
             .await
             .map_err(|error| on_graphql_error(error, "Could not create board!"))
     }
@@ -72,8 +72,8 @@ pub fn select_project_by_id(conn: &PgConnection, the_id: &i32) -> QueryResult<Op
     projects.find(the_id).first(conn).optional()
 }
 
-pub fn insert_project(conn: &PgConnection, the_name: &str) -> QueryResult<i32> {
+pub fn insert_project(conn: &PgConnection, the_title: &str) -> QueryResult<i32> {
     use crate::schema::projects::dsl::*;
 
-    diesel::insert_into(projects).values(name.eq(the_name)).returning(id).get_result(conn)
+    diesel::insert_into(projects).values(title.eq(the_title)).returning(id).get_result(conn)
 }

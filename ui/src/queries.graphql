@@ -2,28 +2,62 @@
 query AllProjects {
   projects {
     id
-    name
+    title
   }
-}
-
-mutation NewProject($name: String!) {
-  newProject(name: $name)
 }
 
 # /projects/:id
 
+fragment Card on Card {
+  id
+  title
+}
+
+fragment Slot on Slot {
+  id
+  title
+  cards {
+    ...Card
+  }
+}
+
+fragment Board on Board {
+  id
+  title
+  slots {
+    ...Slot
+  }
+}
+
 query ProjectById($id: Int!) {
   projectById(id: $id) {
-    name
+    title
     boards {
-      id
-      name
+      ...Board
     }
   }
 }
 
-mutation NewBoard($projectId:Int!, $name: String!) {
+# Mutations
+
+mutation CreateProject($title: String!) {
+  createProject(title: $title)
+}
+
+mutation CreateBoard($projectId: Int!, $title: String!) {
   projectMutations(id: $projectId) {
-    createBoard(name: $name)
+    createBoard(title: $title)
+  }
+}
+
+mutation CreateSlot($boardId: Int!, $title: String!) {
+  boardMutations(id: $boardId) {
+    createSlot(title: $title)
+  }
+}
+
+mutation CreateCard($slotId: Int!, $title: String!) {
+  slotMutations(id: $slotId) {
+    createCard(title: $title)
   }
 }
