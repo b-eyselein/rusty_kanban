@@ -14,7 +14,16 @@ mutation NewProject($name: String!) {
 
 query ProjectById($id: Int!) {
   projectById(id: $id) {
-    id
     name
+    boards {
+      id
+      name
+    }
+  }
+}
+
+mutation NewBoard($projectId:Int!, $name: String!) {
+  projectMutations(id: $projectId) {
+    createBoard(name: $name)
   }
 }

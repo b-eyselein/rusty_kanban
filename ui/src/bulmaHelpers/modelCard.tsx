@@ -10,7 +10,7 @@ interface IProps {
 export function BulmaModalCard({title, show, children, close}: IProps): JSX.Element {
   return (
     <div className={classNames('modal', {'is-active': show})}>
-      <div className="modal-background"/>
+      <div className="modal-background" onClick={close}/>
       <div className="modal-card">
         <header className="modal-card-head">
           <p className="modal-card-title">{title}</p>

@@ -1,6 +1,6 @@
 import {Navigate, Route, Routes, useParams} from 'react-router-dom';
 import {homeUrl} from '../urls';
-import {Project} from '../Project';
+import {Project} from './Project';
 
 export function ProjectBase(): JSX.Element {
 

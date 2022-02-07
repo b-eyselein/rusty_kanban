@@ -82,7 +82,15 @@ export type ProjectByIdQueryVariables = Exact<{
 }>;
 
 
-export type ProjectByIdQuery = { __typename?: 'Query', projectById?: { __typename?: 'Project', id: number, name: string } | null };
+export type ProjectByIdQuery = { __typename?: 'Query', projectById?: { __typename?: 'Project', name: string, boards: Array<{ __typename?: 'Board', id: number, name: string }> } | null };
+
+export type NewBoardMutationVariables = Exact<{
+  projectId: Scalars['Int'];
+  name: Scalars['String'];
+}>;
+
+
+export type NewBoardMutation = { __typename?: 'Mutation', projectMutations?: { __typename?: 'ProjectMutations', createBoard: number } | null };
 
 
 export const AllProjectsDocument = gql`
@@ -154,8 +162,11 @@ export type NewProjectMutationOptions = Apollo.BaseMutationOptions<NewProjectMut
 export const ProjectByIdDocument = gql`
     query ProjectById($id: Int!) {
   projectById(id: $id) {
-    id
     name
+    boards {
+      id
+      name
+    }
   }
 }
     `;
@@ -187,3 +198,37 @@ export function useProjectByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type ProjectByIdQueryHookResult = ReturnType<typeof useProjectByIdQuery>;
 export type ProjectByIdLazyQueryHookResult = ReturnType<typeof useProjectByIdLazyQuery>;
 export type ProjectByIdQueryResult = Apollo.QueryResult<ProjectByIdQuery, ProjectByIdQueryVariables>;
+export const NewBoardDocument = gql`
+    mutation NewBoard($projectId: Int!, $name: String!) {
+  projectMutations(id: $projectId) {
+    createBoard(name: $name)
+  }
+}
+    `;
+export type NewBoardMutationFn = Apollo.MutationFunction<NewBoardMutation, NewBoardMutationVariables>;
+
+/**
+ * __useNewBoardMutation__
+ *
+ * To run a mutation, you first call `useNewBoardMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useNewBoardMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [newBoardMutation, { data, loading, error }] = useNewBoardMutation({
+ *   variables: {
+ *      projectId: // value for 'projectId'
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useNewBoardMutation(baseOptions?: Apollo.MutationHookOptions<NewBoardMutation, NewBoardMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<NewBoardMutation, NewBoardMutationVariables>(NewBoardDocument, options);
+      }
+export type NewBoardMutationHookResult = ReturnType<typeof useNewBoardMutation>;
+export type NewBoardMutationResult = Apollo.MutationResult<NewBoardMutation>;
+export type NewBoardMutationOptions = Apollo.BaseMutationOptions<NewBoardMutation, NewBoardMutationVariables>;

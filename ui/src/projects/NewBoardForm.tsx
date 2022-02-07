@@ -1,29 +1,35 @@
+import {NewBoardMutationVariables, useNewBoardMutation} from '../graphql';
+import * as yup from 'yup';
 import {Field, Form, Formik} from 'formik';
 import {useTranslation} from 'react-i18next';
-import {NewProjectMutationVariables, useNewProjectMutation} from './graphql';
-import * as yup from 'yup';
 import classNames from 'classnames';
-import {useNavigate} from 'react-router-dom';
 
-const initialValues: NewProjectMutationVariables = {name: ''};
+interface IProps {
+  projectId: number;
+  onBoardCreated: () => void;
+}
 
-const validationSchema: yup.SchemaOf<NewProjectMutationVariables> = yup.object()
+const validationSchema: yup.SchemaOf<NewBoardMutationVariables> = yup.object()
   .shape({
+    projectId: yup.number().required(),
     name: yup.string().required()
   })
   .required();
 
-export function NewProjectForm(): JSX.Element {
+export function NewBoardForm({projectId, onBoardCreated}: IProps): JSX.Element {
 
-  const [createNewProject, {loading, error}] = useNewProjectMutation();
+  const [createNewBoard, {data, loading, error}] = useNewBoardMutation();
   const {t} = useTranslation('common');
-  const navigate = useNavigate();
 
-  function onSubmit(variables: NewProjectMutationVariables): void {
-    createNewProject({variables})
+  const initialValues: NewBoardMutationVariables = {projectId, name: ''};
+
+  function onSubmit(variables: NewBoardMutationVariables): void {
+    console.info(variables);
+
+    createNewBoard({variables})
       .then(({data}) => {
-        if (data) {
-          navigate(`/projects/${data.newProject}`);
+        if (data?.projectMutations?.createBoard) {
+          onBoardCreated();
         }
       })
       .catch((error) => console.error(error));
@@ -44,8 +50,9 @@ export function NewProjectForm(): JSX.Element {
         {error && <div className="notification is-danger">{error.message}</div>}
 
         <button type="submit" className={classNames('button', 'is-link', 'is-fullwidth', {'is-loading': loading})} disabled={loading}>
-          {t('createNewProject')}
+          {t('createNewBoard')}
         </button>
+
       </Form>}
     </Formik>
   );

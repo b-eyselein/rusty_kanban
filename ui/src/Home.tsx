@@ -33,9 +33,9 @@ export function Home(): JSX.Element {
         </div>}
       </WithQuery>
 
-      <BulmaModalCard title={t('createNewProject')} show={showNewProjectFormModal} close={() => setShowNewProjectFormModal(false)}>
+      {showNewProjectFormModal && <BulmaModalCard title={t('createNewProject')} show={true} close={() => setShowNewProjectFormModal(false)}>
         <NewProjectForm/>
-      </BulmaModalCard>
+      </BulmaModalCard>}
 
     </div>
   );
