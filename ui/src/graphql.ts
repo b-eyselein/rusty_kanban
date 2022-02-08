@@ -127,6 +127,7 @@ export type Slot = {
 export type SlotMutations = {
   __typename?: 'SlotMutations';
   createCard: Scalars['Int'];
+  rename: Scalars['String'];
 };
 
 
@@ -134,31 +135,16 @@ export type SlotMutationsCreateCardArgs = {
   title: Scalars['String'];
 };
 
+
+export type SlotMutationsRenameArgs = {
+  newTitle: Scalars['String'];
+};
+
 export type Task = {
   __typename?: 'Task';
   content: Scalars['String'];
   id: Scalars['Int'];
 };
-
-export type AllProjectsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type AllProjectsQuery = { __typename?: 'Query', projects: Array<{ __typename?: 'Project', id: number, title: string }> };
-
-export type TaskFragment = { __typename?: 'Task', id: number, content: string };
-
-export type CardFragment = { __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, content: string }> };
-
-export type SlotFragment = { __typename?: 'Slot', id: number, title: string, cards: Array<{ __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, content: string }> }> };
-
-export type BoardFragment = { __typename?: 'Board', id: number, title: string, slots: Array<{ __typename?: 'Slot', id: number, title: string, cards: Array<{ __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, content: string }> }> }> };
-
-export type ProjectByIdQueryVariables = Exact<{
-  id: Scalars['Int'];
-}>;
-
-
-export type ProjectByIdQuery = { __typename?: 'Query', projectById?: { __typename?: 'Project', title: string, boards: Array<{ __typename?: 'Board', id: number, title: string, slots: Array<{ __typename?: 'Slot', id: number, title: string, cards: Array<{ __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, content: string }> }> }> }> } | null };
 
 export type CreateProjectMutationVariables = Exact<{
   title: Scalars['String'];
@@ -168,7 +154,7 @@ export type CreateProjectMutationVariables = Exact<{
 export type CreateProjectMutation = { __typename?: 'Mutation', createProject: number };
 
 export type RenameProjectMutationVariables = Exact<{
-  id: Scalars['Int'];
+  projectId: Scalars['Int'];
   newTitle: Scalars['String'];
 }>;
 
@@ -191,6 +177,14 @@ export type CreateSlotMutationVariables = Exact<{
 
 export type CreateSlotMutation = { __typename?: 'Mutation', boardMutations?: { __typename?: 'BoardMutations', createSlot: number } | null };
 
+export type RenameSlotMutationVariables = Exact<{
+  slotId: Scalars['Int'];
+  newTitle: Scalars['String'];
+}>;
+
+
+export type RenameSlotMutation = { __typename?: 'Mutation', slotMutations?: { __typename?: 'SlotMutations', rename: string } | null };
+
 export type CreateCardMutationVariables = Exact<{
   slotId: Scalars['Int'];
   title: Scalars['String'];
@@ -206,6 +200,26 @@ export type CreateTaskMutationVariables = Exact<{
 
 
 export type CreateTaskMutation = { __typename?: 'Mutation', cardMutations?: { __typename?: 'CardMutations', createTask: number } | null };
+
+export type AllProjectsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllProjectsQuery = { __typename?: 'Query', projects: Array<{ __typename?: 'Project', id: number, title: string }> };
+
+export type TaskFragment = { __typename?: 'Task', id: number, content: string };
+
+export type CardFragment = { __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, content: string }> };
+
+export type SlotFragment = { __typename?: 'Slot', id: number, title: string, cards: Array<{ __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, content: string }> }> };
+
+export type BoardFragment = { __typename?: 'Board', id: number, title: string, slots: Array<{ __typename?: 'Slot', id: number, title: string, cards: Array<{ __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, content: string }> }> }> };
+
+export type ProjectByIdQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type ProjectByIdQuery = { __typename?: 'Query', projectById?: { __typename?: 'Project', title: string, boards: Array<{ __typename?: 'Board', id: number, title: string, slots: Array<{ __typename?: 'Slot', id: number, title: string, cards: Array<{ __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, content: string }> }> }> }> } | null };
 
 export const TaskFragmentDoc = gql`
     fragment Task on Task {
@@ -240,79 +254,6 @@ export const BoardFragmentDoc = gql`
   }
 }
     ${SlotFragmentDoc}`;
-export const AllProjectsDocument = gql`
-    query AllProjects {
-  projects {
-    id
-    title
-  }
-}
-    `;
-
-/**
- * __useAllProjectsQuery__
- *
- * To run a query within a React component, call `useAllProjectsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAllProjectsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAllProjectsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useAllProjectsQuery(baseOptions?: Apollo.QueryHookOptions<AllProjectsQuery, AllProjectsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<AllProjectsQuery, AllProjectsQueryVariables>(AllProjectsDocument, options);
-      }
-export function useAllProjectsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AllProjectsQuery, AllProjectsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<AllProjectsQuery, AllProjectsQueryVariables>(AllProjectsDocument, options);
-        }
-export type AllProjectsQueryHookResult = ReturnType<typeof useAllProjectsQuery>;
-export type AllProjectsLazyQueryHookResult = ReturnType<typeof useAllProjectsLazyQuery>;
-export type AllProjectsQueryResult = Apollo.QueryResult<AllProjectsQuery, AllProjectsQueryVariables>;
-export const ProjectByIdDocument = gql`
-    query ProjectById($id: Int!) {
-  projectById(id: $id) {
-    title
-    boards {
-      ...Board
-    }
-  }
-}
-    ${BoardFragmentDoc}`;
-
-/**
- * __useProjectByIdQuery__
- *
- * To run a query within a React component, call `useProjectByIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useProjectByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useProjectByIdQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useProjectByIdQuery(baseOptions: Apollo.QueryHookOptions<ProjectByIdQuery, ProjectByIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ProjectByIdQuery, ProjectByIdQueryVariables>(ProjectByIdDocument, options);
-      }
-export function useProjectByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProjectByIdQuery, ProjectByIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ProjectByIdQuery, ProjectByIdQueryVariables>(ProjectByIdDocument, options);
-        }
-export type ProjectByIdQueryHookResult = ReturnType<typeof useProjectByIdQuery>;
-export type ProjectByIdLazyQueryHookResult = ReturnType<typeof useProjectByIdLazyQuery>;
-export type ProjectByIdQueryResult = Apollo.QueryResult<ProjectByIdQuery, ProjectByIdQueryVariables>;
 export const CreateProjectDocument = gql`
     mutation CreateProject($title: String!) {
   createProject(title: $title)
@@ -345,8 +286,8 @@ export type CreateProjectMutationHookResult = ReturnType<typeof useCreateProject
 export type CreateProjectMutationResult = Apollo.MutationResult<CreateProjectMutation>;
 export type CreateProjectMutationOptions = Apollo.BaseMutationOptions<CreateProjectMutation, CreateProjectMutationVariables>;
 export const RenameProjectDocument = gql`
-    mutation RenameProject($id: Int!, $newTitle: String!) {
-  projectMutations(id: $id) {
+    mutation RenameProject($projectId: Int!, $newTitle: String!) {
+  projectMutations(id: $projectId) {
     rename(newTitle: $newTitle)
   }
 }
@@ -366,7 +307,7 @@ export type RenameProjectMutationFn = Apollo.MutationFunction<RenameProjectMutat
  * @example
  * const [renameProjectMutation, { data, loading, error }] = useRenameProjectMutation({
  *   variables: {
- *      id: // value for 'id'
+ *      projectId: // value for 'projectId'
  *      newTitle: // value for 'newTitle'
  *   },
  * });
@@ -446,6 +387,40 @@ export function useCreateSlotMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateSlotMutationHookResult = ReturnType<typeof useCreateSlotMutation>;
 export type CreateSlotMutationResult = Apollo.MutationResult<CreateSlotMutation>;
 export type CreateSlotMutationOptions = Apollo.BaseMutationOptions<CreateSlotMutation, CreateSlotMutationVariables>;
+export const RenameSlotDocument = gql`
+    mutation RenameSlot($slotId: Int!, $newTitle: String!) {
+  slotMutations(id: $slotId) {
+    rename(newTitle: $newTitle)
+  }
+}
+    `;
+export type RenameSlotMutationFn = Apollo.MutationFunction<RenameSlotMutation, RenameSlotMutationVariables>;
+
+/**
+ * __useRenameSlotMutation__
+ *
+ * To run a mutation, you first call `useRenameSlotMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRenameSlotMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [renameSlotMutation, { data, loading, error }] = useRenameSlotMutation({
+ *   variables: {
+ *      slotId: // value for 'slotId'
+ *      newTitle: // value for 'newTitle'
+ *   },
+ * });
+ */
+export function useRenameSlotMutation(baseOptions?: Apollo.MutationHookOptions<RenameSlotMutation, RenameSlotMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RenameSlotMutation, RenameSlotMutationVariables>(RenameSlotDocument, options);
+      }
+export type RenameSlotMutationHookResult = ReturnType<typeof useRenameSlotMutation>;
+export type RenameSlotMutationResult = Apollo.MutationResult<RenameSlotMutation>;
+export type RenameSlotMutationOptions = Apollo.BaseMutationOptions<RenameSlotMutation, RenameSlotMutationVariables>;
 export const CreateCardDocument = gql`
     mutation CreateCard($slotId: Int!, $title: String!) {
   slotMutations(id: $slotId) {
@@ -514,3 +489,76 @@ export function useCreateTaskMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateTaskMutationHookResult = ReturnType<typeof useCreateTaskMutation>;
 export type CreateTaskMutationResult = Apollo.MutationResult<CreateTaskMutation>;
 export type CreateTaskMutationOptions = Apollo.BaseMutationOptions<CreateTaskMutation, CreateTaskMutationVariables>;
+export const AllProjectsDocument = gql`
+    query AllProjects {
+  projects {
+    id
+    title
+  }
+}
+    `;
+
+/**
+ * __useAllProjectsQuery__
+ *
+ * To run a query within a React component, call `useAllProjectsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAllProjectsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAllProjectsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAllProjectsQuery(baseOptions?: Apollo.QueryHookOptions<AllProjectsQuery, AllProjectsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<AllProjectsQuery, AllProjectsQueryVariables>(AllProjectsDocument, options);
+      }
+export function useAllProjectsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AllProjectsQuery, AllProjectsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<AllProjectsQuery, AllProjectsQueryVariables>(AllProjectsDocument, options);
+        }
+export type AllProjectsQueryHookResult = ReturnType<typeof useAllProjectsQuery>;
+export type AllProjectsLazyQueryHookResult = ReturnType<typeof useAllProjectsLazyQuery>;
+export type AllProjectsQueryResult = Apollo.QueryResult<AllProjectsQuery, AllProjectsQueryVariables>;
+export const ProjectByIdDocument = gql`
+    query ProjectById($id: Int!) {
+  projectById(id: $id) {
+    title
+    boards {
+      ...Board
+    }
+  }
+}
+    ${BoardFragmentDoc}`;
+
+/**
+ * __useProjectByIdQuery__
+ *
+ * To run a query within a React component, call `useProjectByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProjectByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProjectByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useProjectByIdQuery(baseOptions: Apollo.QueryHookOptions<ProjectByIdQuery, ProjectByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProjectByIdQuery, ProjectByIdQueryVariables>(ProjectByIdDocument, options);
+      }
+export function useProjectByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProjectByIdQuery, ProjectByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProjectByIdQuery, ProjectByIdQueryVariables>(ProjectByIdDocument, options);
+        }
+export type ProjectByIdQueryHookResult = ReturnType<typeof useProjectByIdQuery>;
+export type ProjectByIdLazyQueryHookResult = ReturnType<typeof useProjectByIdLazyQuery>;
+export type ProjectByIdQueryResult = Apollo.QueryResult<ProjectByIdQuery, ProjectByIdQueryVariables>;

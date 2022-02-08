@@ -17,7 +17,7 @@ export function ProjectTitle({projectId, title, onDataUpdate}: IProps): JSX.Elem
     const newTitle = event.currentTarget.textContent;
 
     if (newTitle !== null && newTitle !== title) {
-      renameProject({variables: {id: projectId, newTitle}})
+      renameProject({variables: {projectId, newTitle}})
         .then(({data}) => {
           if (data?.projectMutations?.rename) {
             onDataUpdate();
@@ -29,11 +29,9 @@ export function ProjectTitle({projectId, title, onDataUpdate}: IProps): JSX.Elem
 
   return (
     <>
-      <h1 className="title is-3" contentEditable="true" suppressContentEditableWarning={true} onBlur={onTitleChangeBlur}>
-        {title}
+      <h1 className="title is-3" contentEditable="true" suppressContentEditableWarning={true} onBlur={onTitleChangeBlur}>{title}</h1>
 
-        {loading && <button className="button is-loading" title={t('changingProjectTitle')}/>}
-      </h1>
+      {loading && <button className="button is-loading" title={t('changingProjectTitle')}/>}
 
       {error && <div className="notification is-danger">{error.message}</div>}
 

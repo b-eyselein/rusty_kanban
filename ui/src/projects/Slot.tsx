@@ -3,6 +3,7 @@ import {AiOutlinePlus} from 'react-icons/ai';
 import {NewCardForm} from './NewCardForm';
 import {useState} from 'react';
 import {Card} from './Card';
+import {SlotTitle} from './SlotTitle';
 
 interface IProps {
   slot: SlotFragment;
@@ -13,6 +14,8 @@ export function Slot({slot, onDataUpdate}: IProps): JSX.Element {
 
   const [showNewCardForm, setShowNewCardForm] = useState(false);
 
+  const {id, title, cards} = slot;
+
   function onCardCreated(): void {
     setShowNewCardForm(false);
     onDataUpdate();
@@ -20,14 +23,14 @@ export function Slot({slot, onDataUpdate}: IProps): JSX.Element {
 
   return (
     <>
-      <h2 className="subtitle is-4 has-text-centered">{slot.title}</h2>
+      <SlotTitle slotId={id} title={title} onDataUpdate={onDataUpdate}/>
 
-      {slot.cards.map((card) => <div className="my-3" key={card.id}>
+      {cards.map((card) => <div className="my-3" key={card.id}>
         <Card card={card}/>
       </div>)}
 
       {showNewCardForm && <div className="my-3">
-        <NewCardForm slotId={slot.id} onCardCreated={onCardCreated}/>
+        <NewCardForm slotId={id} onCardCreated={onCardCreated}/>
       </div>}
 
       <button type="button" className="my-3 button is-link" onClick={() => setShowNewCardForm(true)}>

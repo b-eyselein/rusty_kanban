@@ -45,39 +45,3 @@ query ProjectById($id: Int!) {
     }
   }
 }
-
-# Mutations
-
-mutation CreateProject($title: String!) {
-  createProject(title: $title)
-}
-
-mutation RenameProject($id: Int!, $newTitle: String!) {
-  projectMutations(id: $id) {
-    rename(newTitle: $newTitle)
-  }
-}
-
-mutation CreateBoard($projectId: Int!, $title: String!) {
-  projectMutations(id: $projectId) {
-    createBoard(title: $title)
-  }
-}
-
-mutation CreateSlot($boardId: Int!, $title: String!) {
-  boardMutations(id: $boardId) {
-    createSlot(title: $title)
-  }
-}
-
-mutation CreateCard($slotId: Int!, $title: String!) {
-  slotMutations(id: $slotId) {
-    createCard(title: $title)
-  }
-}
-
-mutation CreateTask($cardId: Int!, $content: String!) {
-  cardMutations(id: $cardId) {
-    createTask(content: $content)
-  }
-}

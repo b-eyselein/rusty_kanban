@@ -1,0 +1,39 @@
+mutation CreateProject($title: String!) {
+  createProject(title: $title)
+}
+
+mutation RenameProject($projectId: Int!, $newTitle: String!) {
+  projectMutations(id: $projectId) {
+    rename(newTitle: $newTitle)
+  }
+}
+
+mutation CreateBoard($projectId: Int!, $title: String!) {
+  projectMutations(id: $projectId) {
+    createBoard(title: $title)
+  }
+}
+
+mutation CreateSlot($boardId: Int!, $title: String!) {
+  boardMutations(id: $boardId) {
+    createSlot(title: $title)
+  }
+}
+
+mutation RenameSlot($slotId: Int!, $newTitle: String!) {
+  slotMutations(id: $slotId) {
+    rename(newTitle: $newTitle)
+  }
+}
+
+mutation CreateCard($slotId: Int!, $title: String!) {
+  slotMutations(id: $slotId) {
+    createCard(title: $title)
+  }
+}
+
+mutation CreateTask($cardId: Int!, $content: String!) {
+  cardMutations(id: $cardId) {
+    createTask(content: $content)
+  }
+}

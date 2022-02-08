@@ -54,6 +54,16 @@ impl SlotMutations {
             .await
             .map_err(|error| on_graphql_error(error, "Could not insert card!"))
     }
+
+    pub async fn rename(&self, new_title: String, context: &MyGraphQLContext) -> FieldResult<String> {
+        let slot_id = self.id;
+
+        context
+            .connection
+            .run(move |c| update_slot_title(c, &slot_id, &new_title))
+            .await
+            .map_err(|error| on_graphql_error(error, &format!("Could not rename slot with id {slot_id}")))
+    }
 }
 
 // Queries
@@ -76,5 +86,14 @@ pub fn insert_slot(conn: &PgConnection, the_board_id: &i32, the_title: &str) -> 
     diesel::insert_into(slots)
         .values((board_id.eq(the_board_id), title.eq(the_title)))
         .returning(id)
+        .get_result(conn)
+}
+
+pub fn update_slot_title(conn: &PgConnection, the_id: &i32, new_title: &str) -> QueryResult<String> {
+    use crate::schema::slots::dsl::*;
+
+    diesel::update(slots.filter(id.eq(the_id)))
+        .set(title.eq(new_title))
+        .returning(title)
         .get_result(conn)
 }

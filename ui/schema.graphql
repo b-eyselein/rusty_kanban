@@ -50,6 +50,7 @@ type Slot {
 
 type SlotMutations {
   createCard(title: String!): Int!
+  rename(newTitle: String!): String!
 }
 
 type Task {
