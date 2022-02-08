@@ -54,6 +54,16 @@ impl BoardMutations {
             .await
             .map_err(|error| on_graphql_error(error, "Could not insert slot!"))
     }
+
+    pub async fn rename(&self, new_title: String, context: &MyGraphQLContext) -> FieldResult<String> {
+        let board_id = self.id;
+
+        context
+            .connection
+            .run(move |c| update_board_title(c, &board_id, &new_title))
+            .await
+            .map_err(|error| on_graphql_error(error, &format!("Could not rename board with id {board_id}")))
+    }
 }
 
 // Queries
@@ -77,4 +87,10 @@ pub fn insert_board(conn: &PgConnection, the_project_id: &i32, the_title: &str) 
         .values((project_id.eq(the_project_id), title.eq(the_title)))
         .returning(id)
         .get_result(conn)
+}
+
+pub fn update_board_title(conn: &PgConnection, the_id: &i32, new_title: &str) -> QueryResult<String> {
+    use crate::schema::boards::dsl::*;
+
+    diesel::update(boards.find(the_id)).set(title.eq(new_title)).returning(title).get_result(conn)
 }

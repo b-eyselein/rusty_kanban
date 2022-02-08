@@ -89,8 +89,5 @@ pub fn insert_project(conn: &PgConnection, the_title: &str) -> QueryResult<i32> 
 pub fn update_project_title(conn: &PgConnection, the_id: &i32, new_title: &str) -> QueryResult<String> {
     use crate::schema::projects::dsl::*;
 
-    diesel::update(projects.filter(id.eq(the_id)))
-        .set(title.eq(new_title))
-        .returning(title)
-        .get_result(conn)
+    diesel::update(projects.find(the_id)).set(title.eq(new_title)).returning(title).get_result(conn)
 }

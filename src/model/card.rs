@@ -55,6 +55,16 @@ impl CardMutations {
             .await
             .map_err(|error| on_graphql_error(error, &format!("Could not insert task for card {card_id}")))
     }
+
+    pub async fn rename(&self, new_title: String, context: &MyGraphQLContext) -> FieldResult<String> {
+        let card_id = self.id;
+
+        context
+            .connection
+            .run(move |c| update_card_title(c, &card_id, &new_title))
+            .await
+            .map_err(|error| on_graphql_error(error, &format!("Could not update title for card {card_id}")))
+    }
 }
 
 // Queries
@@ -78,4 +88,10 @@ pub fn insert_card(conn: &PgConnection, the_slot_id: &i32, the_title: &str) -> Q
         .values((slot_id.eq(the_slot_id), title.eq(the_title)))
         .returning(id)
         .get_result(conn)
+}
+
+pub fn update_card_title(conn: &PgConnection, the_id: &i32, new_title: &str) -> QueryResult<String> {
+    use crate::schema::cards::dsl::*;
+
+    diesel::update(cards.find(the_id)).set(title.eq(new_title)).returning(title).get_result(conn)
 }

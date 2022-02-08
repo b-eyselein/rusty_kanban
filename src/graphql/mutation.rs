@@ -5,6 +5,7 @@ use crate::model::board::{select_board_by_id, BoardMutations};
 use crate::model::card::{select_card, CardMutations};
 use crate::model::project::{insert_project, select_project_by_id, ProjectMutations};
 use crate::model::slot::{select_slot, SlotMutations};
+use crate::model::task::{select_task, TaskMutations};
 
 pub struct Mutation;
 
@@ -57,5 +58,15 @@ impl Mutation {
             .map_err(|error| on_graphql_error(error, &format!("Could not find card with id {id}")))?;
 
         Ok(maybe_card.map(|c| CardMutations(c)))
+    }
+
+    pub async fn task_mutations(id: i32, context: &MyGraphQLContext) -> FieldResult<Option<TaskMutations>> {
+        let maybe_task = context
+            .connection
+            .run(move |c| select_task(c, &id))
+            .await
+            .map_err(|error| on_graphql_error(error, &format!("Could not find task with id {id}")))?;
+
+        Ok(maybe_task.map(|t| TaskMutations(t)))
     }
 }

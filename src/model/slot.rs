@@ -92,8 +92,5 @@ pub fn insert_slot(conn: &PgConnection, the_board_id: &i32, the_title: &str) -> 
 pub fn update_slot_title(conn: &PgConnection, the_id: &i32, new_title: &str) -> QueryResult<String> {
     use crate::schema::slots::dsl::*;
 
-    diesel::update(slots.filter(id.eq(the_id)))
-        .set(title.eq(new_title))
-        .returning(title)
-        .get_result(conn)
+    diesel::update(slots.find(the_id)).set(title.eq(new_title)).returning(title).get_result(conn)
 }
