@@ -37,8 +37,8 @@ create table if not exists cards (
 
 create table if not exists tasks (
   id      serial primary key,
-  content varchar(255) not null,
+  title   varchar(255) not null,
   card_id integer      not null references cards (id) on update cascade on delete cascade,
 
-  unique (card_id, content)
+  unique (card_id, title)
 );

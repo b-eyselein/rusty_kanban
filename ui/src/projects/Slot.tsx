@@ -26,7 +26,7 @@ export function Slot({slot, onDataUpdate}: IProps): JSX.Element {
       <SlotTitle slotId={id} title={title} onDataUpdate={onDataUpdate}/>
 
       {cards.map((card) => <div className="my-3" key={card.id}>
-        <Card card={card}/>
+        <Card card={card} onDataUpdate={onDataUpdate}/>
       </div>)}
 
       {showNewCardForm && <div className="my-3">

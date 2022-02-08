@@ -32,7 +32,7 @@ table! {
 table! {
     tasks (id) {
         id -> Int4,
-        content -> Varchar,
+        title -> Varchar,
         card_id -> Int4,
     }
 }

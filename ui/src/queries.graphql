@@ -10,7 +10,7 @@ query AllProjects {
 
 fragment Task on Task {
   id
-  content
+  title
 }
 
 fragment Card on Card {

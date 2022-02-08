@@ -6,6 +6,7 @@ type Board {
 
 type BoardMutations {
   createSlot(title: String!): Int!
+  rename(newTitle: String!): String!
 }
 
 type Card {
@@ -16,6 +17,7 @@ type Card {
 
 type CardMutations {
   createTask(content: String!): Int!
+  rename(newTitle: String!): String!
 }
 
 type Mutation {
@@ -24,6 +26,7 @@ type Mutation {
   createProject(title: String!): Int!
   projectMutations(id: Int!): ProjectMutations
   slotMutations(id: Int!): SlotMutations
+  taskMutations(id: Int!): TaskMutations
 }
 
 type Project {
@@ -54,6 +57,10 @@ type SlotMutations {
 }
 
 type Task {
-  content: String!
   id: Int!
+  title: String!
+}
+
+type TaskMutations {
+  update(newTitle: String!): String!
 }

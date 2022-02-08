@@ -6,7 +6,7 @@ use crate::graphql::{on_graphql_error, MyGraphQLContext};
 #[derive(Debug, Queryable)]
 pub struct Task {
     id: i32,
-    content: String,
+    title: String,
 }
 
 // GraphQL
@@ -17,8 +17,8 @@ impl Task {
         &self.id
     }
 
-    pub fn content(&self) -> &str {
-        &self.content
+    pub fn title(&self) -> &str {
+        &self.title
     }
 }
 
@@ -34,14 +34,14 @@ impl std::ops::Deref for TaskMutations {
 
 #[graphql_object(Context = MyGraphQLContext)]
 impl TaskMutations {
-    pub async fn update(&self, new_content: String, context: &MyGraphQLContext) -> FieldResult<String> {
+    pub async fn update(&self, new_title: String, context: &MyGraphQLContext) -> FieldResult<String> {
         let task_id = self.id;
 
         context
             .connection
-            .run(move |c| update_task_content(c, &task_id, &new_content))
+            .run(move |c| update_task_title(c, &task_id, &new_title))
             .await
-            .map_err(|error| on_graphql_error(error, &format!("Could not update content of task with id {task_id}")))
+            .map_err(|error| on_graphql_error(error, &format!("Could not update title of task with id {task_id}")))
     }
 }
 
@@ -50,29 +50,26 @@ impl TaskMutations {
 pub fn select_tasks_for_card(conn: &PgConnection, the_card_id: &i32) -> QueryResult<Vec<Task>> {
     use crate::schema::tasks::dsl::*;
 
-    tasks.filter(card_id.eq(the_card_id)).select((id, content)).load(conn)
+    tasks.filter(card_id.eq(the_card_id)).select((id, title)).load(conn)
 }
 
 pub fn select_task(conn: &PgConnection, the_id: &i32) -> QueryResult<Option<Task>> {
     use crate::schema::tasks::dsl::*;
 
-    tasks.find(the_id).select((id, content)).first(conn).optional()
+    tasks.find(the_id).select((id, title)).first(conn).optional()
 }
 
-pub fn insert_task(conn: &PgConnection, the_card_id: &i32, the_content: &str) -> QueryResult<i32> {
+pub fn insert_task(conn: &PgConnection, the_card_id: &i32, the_title: &str) -> QueryResult<i32> {
     use crate::schema::tasks::dsl::*;
 
     diesel::insert_into(tasks)
-        .values((card_id.eq(the_card_id), content.eq(the_content)))
+        .values((card_id.eq(the_card_id), title.eq(the_title)))
         .returning(id)
         .get_result(conn)
 }
 
-pub fn update_task_content(conn: &PgConnection, the_id: &i32, new_content: &str) -> QueryResult<String> {
+pub fn update_task_title(conn: &PgConnection, the_id: &i32, new_title: &str) -> QueryResult<String> {
     use crate::schema::tasks::dsl::*;
 
-    diesel::update(tasks.find(the_id))
-        .set(content.eq(new_content))
-        .returning(content)
-        .get_result(conn)
+    diesel::update(tasks.find(the_id)).set(title.eq(new_title)).returning(title).get_result(conn)
 }

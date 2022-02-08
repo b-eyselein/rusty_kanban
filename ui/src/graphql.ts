@@ -25,11 +25,17 @@ export type Board = {
 export type BoardMutations = {
   __typename?: 'BoardMutations';
   createSlot: Scalars['Int'];
+  rename: Scalars['String'];
 };
 
 
 export type BoardMutationsCreateSlotArgs = {
   title: Scalars['String'];
+};
+
+
+export type BoardMutationsRenameArgs = {
+  newTitle: Scalars['String'];
 };
 
 export type Card = {
@@ -42,11 +48,17 @@ export type Card = {
 export type CardMutations = {
   __typename?: 'CardMutations';
   createTask: Scalars['Int'];
+  rename: Scalars['String'];
 };
 
 
 export type CardMutationsCreateTaskArgs = {
   content: Scalars['String'];
+};
+
+
+export type CardMutationsRenameArgs = {
+  newTitle: Scalars['String'];
 };
 
 export type Mutation = {
@@ -56,6 +68,7 @@ export type Mutation = {
   createProject: Scalars['Int'];
   projectMutations?: Maybe<ProjectMutations>;
   slotMutations?: Maybe<SlotMutations>;
+  taskMutations?: Maybe<TaskMutations>;
 };
 
 
@@ -80,6 +93,11 @@ export type MutationProjectMutationsArgs = {
 
 
 export type MutationSlotMutationsArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationTaskMutationsArgs = {
   id: Scalars['Int'];
 };
 
@@ -142,8 +160,18 @@ export type SlotMutationsRenameArgs = {
 
 export type Task = {
   __typename?: 'Task';
-  content: Scalars['String'];
   id: Scalars['Int'];
+  title: Scalars['String'];
+};
+
+export type TaskMutations = {
+  __typename?: 'TaskMutations';
+  update: Scalars['String'];
+};
+
+
+export type TaskMutationsUpdateArgs = {
+  newTitle: Scalars['String'];
 };
 
 export type CreateProjectMutationVariables = Exact<{
@@ -169,6 +197,14 @@ export type CreateBoardMutationVariables = Exact<{
 
 export type CreateBoardMutation = { __typename?: 'Mutation', projectMutations?: { __typename?: 'ProjectMutations', createBoard: number } | null };
 
+export type RenameBoardsMutationVariables = Exact<{
+  boardId: Scalars['Int'];
+  newTitle: Scalars['String'];
+}>;
+
+
+export type RenameBoardsMutation = { __typename?: 'Mutation', boardMutations?: { __typename?: 'BoardMutations', rename: string } | null };
+
 export type CreateSlotMutationVariables = Exact<{
   boardId: Scalars['Int'];
   title: Scalars['String'];
@@ -193,6 +229,14 @@ export type CreateCardMutationVariables = Exact<{
 
 export type CreateCardMutation = { __typename?: 'Mutation', slotMutations?: { __typename?: 'SlotMutations', createCard: number } | null };
 
+export type RenameCardMutationVariables = Exact<{
+  cardId: Scalars['Int'];
+  newTitle: Scalars['String'];
+}>;
+
+
+export type RenameCardMutation = { __typename?: 'Mutation', cardMutations?: { __typename?: 'CardMutations', rename: string } | null };
+
 export type CreateTaskMutationVariables = Exact<{
   cardId: Scalars['Int'];
   content: Scalars['String'];
@@ -201,30 +245,38 @@ export type CreateTaskMutationVariables = Exact<{
 
 export type CreateTaskMutation = { __typename?: 'Mutation', cardMutations?: { __typename?: 'CardMutations', createTask: number } | null };
 
+export type UpdateTaskContentMutationVariables = Exact<{
+  taskId: Scalars['Int'];
+  newTitle: Scalars['String'];
+}>;
+
+
+export type UpdateTaskContentMutation = { __typename?: 'Mutation', taskMutations?: { __typename?: 'TaskMutations', update: string } | null };
+
 export type AllProjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type AllProjectsQuery = { __typename?: 'Query', projects: Array<{ __typename?: 'Project', id: number, title: string }> };
 
-export type TaskFragment = { __typename?: 'Task', id: number, content: string };
+export type TaskFragment = { __typename?: 'Task', id: number, title: string };
 
-export type CardFragment = { __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, content: string }> };
+export type CardFragment = { __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, title: string }> };
 
-export type SlotFragment = { __typename?: 'Slot', id: number, title: string, cards: Array<{ __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, content: string }> }> };
+export type SlotFragment = { __typename?: 'Slot', id: number, title: string, cards: Array<{ __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, title: string }> }> };
 
-export type BoardFragment = { __typename?: 'Board', id: number, title: string, slots: Array<{ __typename?: 'Slot', id: number, title: string, cards: Array<{ __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, content: string }> }> }> };
+export type BoardFragment = { __typename?: 'Board', id: number, title: string, slots: Array<{ __typename?: 'Slot', id: number, title: string, cards: Array<{ __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, title: string }> }> }> };
 
 export type ProjectByIdQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type ProjectByIdQuery = { __typename?: 'Query', projectById?: { __typename?: 'Project', title: string, boards: Array<{ __typename?: 'Board', id: number, title: string, slots: Array<{ __typename?: 'Slot', id: number, title: string, cards: Array<{ __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, content: string }> }> }> }> } | null };
+export type ProjectByIdQuery = { __typename?: 'Query', projectById?: { __typename?: 'Project', title: string, boards: Array<{ __typename?: 'Board', id: number, title: string, slots: Array<{ __typename?: 'Slot', id: number, title: string, cards: Array<{ __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, title: string }> }> }> }> } | null };
 
 export const TaskFragmentDoc = gql`
     fragment Task on Task {
   id
-  content
+  title
 }
     `;
 export const CardFragmentDoc = gql`
@@ -353,6 +405,40 @@ export function useCreateBoardMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateBoardMutationHookResult = ReturnType<typeof useCreateBoardMutation>;
 export type CreateBoardMutationResult = Apollo.MutationResult<CreateBoardMutation>;
 export type CreateBoardMutationOptions = Apollo.BaseMutationOptions<CreateBoardMutation, CreateBoardMutationVariables>;
+export const RenameBoardsDocument = gql`
+    mutation RenameBoards($boardId: Int!, $newTitle: String!) {
+  boardMutations(id: $boardId) {
+    rename(newTitle: $newTitle)
+  }
+}
+    `;
+export type RenameBoardsMutationFn = Apollo.MutationFunction<RenameBoardsMutation, RenameBoardsMutationVariables>;
+
+/**
+ * __useRenameBoardsMutation__
+ *
+ * To run a mutation, you first call `useRenameBoardsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRenameBoardsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [renameBoardsMutation, { data, loading, error }] = useRenameBoardsMutation({
+ *   variables: {
+ *      boardId: // value for 'boardId'
+ *      newTitle: // value for 'newTitle'
+ *   },
+ * });
+ */
+export function useRenameBoardsMutation(baseOptions?: Apollo.MutationHookOptions<RenameBoardsMutation, RenameBoardsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RenameBoardsMutation, RenameBoardsMutationVariables>(RenameBoardsDocument, options);
+      }
+export type RenameBoardsMutationHookResult = ReturnType<typeof useRenameBoardsMutation>;
+export type RenameBoardsMutationResult = Apollo.MutationResult<RenameBoardsMutation>;
+export type RenameBoardsMutationOptions = Apollo.BaseMutationOptions<RenameBoardsMutation, RenameBoardsMutationVariables>;
 export const CreateSlotDocument = gql`
     mutation CreateSlot($boardId: Int!, $title: String!) {
   boardMutations(id: $boardId) {
@@ -455,6 +541,40 @@ export function useCreateCardMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateCardMutationHookResult = ReturnType<typeof useCreateCardMutation>;
 export type CreateCardMutationResult = Apollo.MutationResult<CreateCardMutation>;
 export type CreateCardMutationOptions = Apollo.BaseMutationOptions<CreateCardMutation, CreateCardMutationVariables>;
+export const RenameCardDocument = gql`
+    mutation RenameCard($cardId: Int!, $newTitle: String!) {
+  cardMutations(id: $cardId) {
+    rename(newTitle: $newTitle)
+  }
+}
+    `;
+export type RenameCardMutationFn = Apollo.MutationFunction<RenameCardMutation, RenameCardMutationVariables>;
+
+/**
+ * __useRenameCardMutation__
+ *
+ * To run a mutation, you first call `useRenameCardMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRenameCardMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [renameCardMutation, { data, loading, error }] = useRenameCardMutation({
+ *   variables: {
+ *      cardId: // value for 'cardId'
+ *      newTitle: // value for 'newTitle'
+ *   },
+ * });
+ */
+export function useRenameCardMutation(baseOptions?: Apollo.MutationHookOptions<RenameCardMutation, RenameCardMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RenameCardMutation, RenameCardMutationVariables>(RenameCardDocument, options);
+      }
+export type RenameCardMutationHookResult = ReturnType<typeof useRenameCardMutation>;
+export type RenameCardMutationResult = Apollo.MutationResult<RenameCardMutation>;
+export type RenameCardMutationOptions = Apollo.BaseMutationOptions<RenameCardMutation, RenameCardMutationVariables>;
 export const CreateTaskDocument = gql`
     mutation CreateTask($cardId: Int!, $content: String!) {
   cardMutations(id: $cardId) {
@@ -489,6 +609,40 @@ export function useCreateTaskMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateTaskMutationHookResult = ReturnType<typeof useCreateTaskMutation>;
 export type CreateTaskMutationResult = Apollo.MutationResult<CreateTaskMutation>;
 export type CreateTaskMutationOptions = Apollo.BaseMutationOptions<CreateTaskMutation, CreateTaskMutationVariables>;
+export const UpdateTaskContentDocument = gql`
+    mutation UpdateTaskContent($taskId: Int!, $newTitle: String!) {
+  taskMutations(id: $taskId) {
+    update(newTitle: $newTitle)
+  }
+}
+    `;
+export type UpdateTaskContentMutationFn = Apollo.MutationFunction<UpdateTaskContentMutation, UpdateTaskContentMutationVariables>;
+
+/**
+ * __useUpdateTaskContentMutation__
+ *
+ * To run a mutation, you first call `useUpdateTaskContentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTaskContentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTaskContentMutation, { data, loading, error }] = useUpdateTaskContentMutation({
+ *   variables: {
+ *      taskId: // value for 'taskId'
+ *      newTitle: // value for 'newTitle'
+ *   },
+ * });
+ */
+export function useUpdateTaskContentMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTaskContentMutation, UpdateTaskContentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateTaskContentMutation, UpdateTaskContentMutationVariables>(UpdateTaskContentDocument, options);
+      }
+export type UpdateTaskContentMutationHookResult = ReturnType<typeof useUpdateTaskContentMutation>;
+export type UpdateTaskContentMutationResult = Apollo.MutationResult<UpdateTaskContentMutation>;
+export type UpdateTaskContentMutationOptions = Apollo.BaseMutationOptions<UpdateTaskContentMutation, UpdateTaskContentMutationVariables>;
 export const AllProjectsDocument = gql`
     query AllProjects {
   projects {

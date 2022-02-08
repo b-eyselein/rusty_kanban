@@ -14,6 +14,12 @@ mutation CreateBoard($projectId: Int!, $title: String!) {
   }
 }
 
+mutation RenameBoards($boardId: Int!, $newTitle: String!) {
+  boardMutations(id: $boardId) {
+    rename(newTitle: $newTitle)
+  }
+}
+
 mutation CreateSlot($boardId: Int!, $title: String!) {
   boardMutations(id: $boardId) {
     createSlot(title: $title)
@@ -32,8 +38,20 @@ mutation CreateCard($slotId: Int!, $title: String!) {
   }
 }
 
+mutation RenameCard($cardId: Int!, $newTitle: String!) {
+  cardMutations(id: $cardId) {
+    rename(newTitle: $newTitle)
+  }
+}
+
 mutation CreateTask($cardId: Int!, $content: String!) {
   cardMutations(id: $cardId) {
     createTask(content: $content)
+  }
+}
+
+mutation UpdateTaskContent($taskId: Int!, $newTitle: String!) {
+  taskMutations(id: $taskId) {
+    update(newTitle: $newTitle)
   }
 }
