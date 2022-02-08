@@ -1,5 +1,3 @@
-use std::ops::Deref;
-
 use diesel::prelude::*;
 use juniper::{graphql_object, FieldResult};
 
@@ -37,7 +35,7 @@ impl Slot {
 
 pub struct SlotMutations(pub Slot);
 
-impl Deref for SlotMutations {
+impl std::ops::Deref for SlotMutations {
     type Target = Slot;
 
     fn deref(&self) -> &Self::Target {

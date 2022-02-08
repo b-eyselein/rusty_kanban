@@ -1,5 +1,3 @@
-use std::ops::Deref;
-
 use diesel::prelude::*;
 use juniper::{graphql_object, FieldResult};
 
@@ -37,7 +35,7 @@ impl Project {
 
 pub struct ProjectMutations(pub Project);
 
-impl Deref for ProjectMutations {
+impl std::ops::Deref for ProjectMutations {
     type Target = Project;
 
     fn deref(&self) -> &Self::Target {

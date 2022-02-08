@@ -35,12 +35,24 @@ export type BoardMutationsCreateSlotArgs = {
 export type Card = {
   __typename?: 'Card';
   id: Scalars['Int'];
+  tasks: Array<Task>;
   title: Scalars['String'];
+};
+
+export type CardMutations = {
+  __typename?: 'CardMutations';
+  createTask: Scalars['Int'];
+};
+
+
+export type CardMutationsCreateTaskArgs = {
+  content: Scalars['String'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
   boardMutations?: Maybe<BoardMutations>;
+  cardMutations?: Maybe<CardMutations>;
   createProject: Scalars['Int'];
   projectMutations?: Maybe<ProjectMutations>;
   slotMutations?: Maybe<SlotMutations>;
@@ -48,6 +60,11 @@ export type Mutation = {
 
 
 export type MutationBoardMutationsArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationCardMutationsArgs = {
   id: Scalars['Int'];
 };
 
@@ -117,23 +134,31 @@ export type SlotMutationsCreateCardArgs = {
   title: Scalars['String'];
 };
 
+export type Task = {
+  __typename?: 'Task';
+  content: Scalars['String'];
+  id: Scalars['Int'];
+};
+
 export type AllProjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type AllProjectsQuery = { __typename?: 'Query', projects: Array<{ __typename?: 'Project', id: number, title: string }> };
 
-export type CardFragment = { __typename?: 'Card', id: number, title: string };
+export type TaskFragment = { __typename?: 'Task', id: number, content: string };
 
-export type SlotFragment = { __typename?: 'Slot', id: number, title: string, cards: Array<{ __typename?: 'Card', id: number, title: string }> };
+export type CardFragment = { __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, content: string }> };
 
-export type BoardFragment = { __typename?: 'Board', id: number, title: string, slots: Array<{ __typename?: 'Slot', id: number, title: string, cards: Array<{ __typename?: 'Card', id: number, title: string }> }> };
+export type SlotFragment = { __typename?: 'Slot', id: number, title: string, cards: Array<{ __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, content: string }> }> };
+
+export type BoardFragment = { __typename?: 'Board', id: number, title: string, slots: Array<{ __typename?: 'Slot', id: number, title: string, cards: Array<{ __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, content: string }> }> }> };
 
 export type ProjectByIdQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type ProjectByIdQuery = { __typename?: 'Query', projectById?: { __typename?: 'Project', title: string, boards: Array<{ __typename?: 'Board', id: number, title: string, slots: Array<{ __typename?: 'Slot', id: number, title: string, cards: Array<{ __typename?: 'Card', id: number, title: string }> }> }> } | null };
+export type ProjectByIdQuery = { __typename?: 'Query', projectById?: { __typename?: 'Project', title: string, boards: Array<{ __typename?: 'Board', id: number, title: string, slots: Array<{ __typename?: 'Slot', id: number, title: string, cards: Array<{ __typename?: 'Card', id: number, title: string, tasks: Array<{ __typename?: 'Task', id: number, content: string }> }> }> }> } | null };
 
 export type CreateProjectMutationVariables = Exact<{
   title: Scalars['String'];
@@ -174,12 +199,29 @@ export type CreateCardMutationVariables = Exact<{
 
 export type CreateCardMutation = { __typename?: 'Mutation', slotMutations?: { __typename?: 'SlotMutations', createCard: number } | null };
 
+export type CreateTaskMutationVariables = Exact<{
+  cardId: Scalars['Int'];
+  content: Scalars['String'];
+}>;
+
+
+export type CreateTaskMutation = { __typename?: 'Mutation', cardMutations?: { __typename?: 'CardMutations', createTask: number } | null };
+
+export const TaskFragmentDoc = gql`
+    fragment Task on Task {
+  id
+  content
+}
+    `;
 export const CardFragmentDoc = gql`
     fragment Card on Card {
   id
   title
+  tasks {
+    ...Task
+  }
 }
-    `;
+    ${TaskFragmentDoc}`;
 export const SlotFragmentDoc = gql`
     fragment Slot on Slot {
   id
@@ -438,3 +480,37 @@ export function useCreateCardMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreateCardMutationHookResult = ReturnType<typeof useCreateCardMutation>;
 export type CreateCardMutationResult = Apollo.MutationResult<CreateCardMutation>;
 export type CreateCardMutationOptions = Apollo.BaseMutationOptions<CreateCardMutation, CreateCardMutationVariables>;
+export const CreateTaskDocument = gql`
+    mutation CreateTask($cardId: Int!, $content: String!) {
+  cardMutations(id: $cardId) {
+    createTask(content: $content)
+  }
+}
+    `;
+export type CreateTaskMutationFn = Apollo.MutationFunction<CreateTaskMutation, CreateTaskMutationVariables>;
+
+/**
+ * __useCreateTaskMutation__
+ *
+ * To run a mutation, you first call `useCreateTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTaskMutation, { data, loading, error }] = useCreateTaskMutation({
+ *   variables: {
+ *      cardId: // value for 'cardId'
+ *      content: // value for 'content'
+ *   },
+ * });
+ */
+export function useCreateTaskMutation(baseOptions?: Apollo.MutationHookOptions<CreateTaskMutation, CreateTaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTaskMutation, CreateTaskMutationVariables>(CreateTaskDocument, options);
+      }
+export type CreateTaskMutationHookResult = ReturnType<typeof useCreateTaskMutation>;
+export type CreateTaskMutationResult = Apollo.MutationResult<CreateTaskMutation>;
+export type CreateTaskMutationOptions = Apollo.BaseMutationOptions<CreateTaskMutation, CreateTaskMutationVariables>;

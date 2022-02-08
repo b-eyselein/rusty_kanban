@@ -2,6 +2,7 @@ use juniper::{graphql_object, FieldResult};
 
 use crate::graphql::{on_graphql_error, MyGraphQLContext};
 use crate::model::board::{select_board_by_id, BoardMutations};
+use crate::model::card::{select_card, CardMutations};
 use crate::model::project::{insert_project, select_project_by_id, ProjectMutations};
 use crate::model::slot::{select_slot, SlotMutations};
 
@@ -23,7 +24,7 @@ impl Mutation {
             .connection
             .run(move |c| select_project_by_id(c, &id))
             .await
-            .map_err(|error| on_graphql_error(error, &format!("Could not select project with id {id}!")))?;
+            .map_err(|error| on_graphql_error(error, &format!("Could not find project with id {id}!")))?;
 
         Ok(maybe_project.map(|p| ProjectMutations(p)))
     }
@@ -33,7 +34,7 @@ impl Mutation {
             .connection
             .run(move |c| select_board_by_id(c, &id))
             .await
-            .map_err(|error| on_graphql_error(error, &format!("Could not select board with id {id}!")))?;
+            .map_err(|error| on_graphql_error(error, &format!("Could not find board with id {id}!")))?;
 
         Ok(maybe_board.map(|b| BoardMutations(b)))
     }
@@ -43,8 +44,18 @@ impl Mutation {
             .connection
             .run(move |c| select_slot(c, &id))
             .await
-            .map_err(|error| on_graphql_error(error, &format!("Could not select slot with id {id}!")))?;
+            .map_err(|error| on_graphql_error(error, &format!("Could not find slot with id {id}!")))?;
 
         Ok(maybe_slot.map(|s| SlotMutations(s)))
+    }
+
+    pub async fn card_mutations(id: i32, context: &MyGraphQLContext) -> FieldResult<Option<CardMutations>> {
+        let maybe_card = context
+            .connection
+            .run(move |c| select_card(c, &id))
+            .await
+            .map_err(|error| on_graphql_error(error, &format!("Could not find card with id {id}")))?;
+
+        Ok(maybe_card.map(|c| CardMutations(c)))
     }
 }

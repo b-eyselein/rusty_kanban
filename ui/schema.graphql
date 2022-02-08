@@ -10,11 +10,17 @@ type BoardMutations {
 
 type Card {
   id: Int!
+  tasks: [Task!]!
   title: String!
+}
+
+type CardMutations {
+  createTask(content: String!): Int!
 }
 
 type Mutation {
   boardMutations(id: Int!): BoardMutations
+  cardMutations(id: Int!): CardMutations
   createProject(title: String!): Int!
   projectMutations(id: Int!): ProjectMutations
   slotMutations(id: Int!): SlotMutations
@@ -44,4 +50,9 @@ type Slot {
 
 type SlotMutations {
   createCard(title: String!): Int!
+}
+
+type Task {
+  content: String!
+  id: Int!
 }
