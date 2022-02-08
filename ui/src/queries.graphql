@@ -44,6 +44,12 @@ mutation CreateProject($title: String!) {
   createProject(title: $title)
 }
 
+mutation RenameProject($id: Int!, $newTitle: String!) {
+  projectMutations(id: $id) {
+    rename(newTitle: $newTitle)
+  }
+}
+
 mutation CreateBoard($projectId: Int!, $title: String!) {
   projectMutations(id: $projectId) {
     createBoard(title: $title)

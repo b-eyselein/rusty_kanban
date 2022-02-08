@@ -142,6 +142,14 @@ export type CreateProjectMutationVariables = Exact<{
 
 export type CreateProjectMutation = { __typename?: 'Mutation', createProject: number };
 
+export type RenameProjectMutationVariables = Exact<{
+  id: Scalars['Int'];
+  newTitle: Scalars['String'];
+}>;
+
+
+export type RenameProjectMutation = { __typename?: 'Mutation', projectMutations?: { __typename?: 'ProjectMutations', rename: string } | null };
+
 export type CreateBoardMutationVariables = Exact<{
   projectId: Scalars['Int'];
   title: Scalars['String'];
@@ -294,6 +302,40 @@ export function useCreateProjectMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateProjectMutationHookResult = ReturnType<typeof useCreateProjectMutation>;
 export type CreateProjectMutationResult = Apollo.MutationResult<CreateProjectMutation>;
 export type CreateProjectMutationOptions = Apollo.BaseMutationOptions<CreateProjectMutation, CreateProjectMutationVariables>;
+export const RenameProjectDocument = gql`
+    mutation RenameProject($id: Int!, $newTitle: String!) {
+  projectMutations(id: $id) {
+    rename(newTitle: $newTitle)
+  }
+}
+    `;
+export type RenameProjectMutationFn = Apollo.MutationFunction<RenameProjectMutation, RenameProjectMutationVariables>;
+
+/**
+ * __useRenameProjectMutation__
+ *
+ * To run a mutation, you first call `useRenameProjectMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRenameProjectMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [renameProjectMutation, { data, loading, error }] = useRenameProjectMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      newTitle: // value for 'newTitle'
+ *   },
+ * });
+ */
+export function useRenameProjectMutation(baseOptions?: Apollo.MutationHookOptions<RenameProjectMutation, RenameProjectMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RenameProjectMutation, RenameProjectMutationVariables>(RenameProjectDocument, options);
+      }
+export type RenameProjectMutationHookResult = ReturnType<typeof useRenameProjectMutation>;
+export type RenameProjectMutationResult = Apollo.MutationResult<RenameProjectMutation>;
+export type RenameProjectMutationOptions = Apollo.BaseMutationOptions<RenameProjectMutation, RenameProjectMutationVariables>;
 export const CreateBoardDocument = gql`
     mutation CreateBoard($projectId: Int!, $title: String!) {
   projectMutations(id: $projectId) {

@@ -8,6 +8,7 @@ import {NewBoardForm} from './NewBoardForm';
 import {useTranslation} from 'react-i18next';
 import {AiOutlinePlus} from 'react-icons/ai';
 import {Board} from './Board';
+import {ProjectTitle} from './ProjectTitle';
 
 interface IProps {
   id: number;
@@ -43,7 +44,7 @@ export function Project({id}: IProps): JSX.Element {
       <WithQuery query={projectByIdQuery}>
         {({projectById}) => <WithNullableNavigate t={projectById}>
           {({title, boards}) => <div>
-            <h1 className="title is-3">{title}</h1>
+            <ProjectTitle projectId={id} title={title} onDataUpdate={onDataUpdate}/>
 
             <BulmaTabs tabs={generateTabsFromBoards(boards, onDataUpdate)}
                        otherEntries={<li><a onClick={() => setShowNewBoardFormModal(true)}><AiOutlinePlus/></a></li>}/>
