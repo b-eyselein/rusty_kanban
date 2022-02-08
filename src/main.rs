@@ -7,17 +7,17 @@ use std::path::PathBuf;
 
 use diesel::PgConnection;
 use juniper::EmptySubscription;
+use juniper_rocket::{GraphQLRequest, GraphQLResponse};
 #[cfg(debug_assertions)]
 use juniper_rocket::graphiql_source;
-use juniper_rocket::{GraphQLRequest, GraphQLResponse};
 use lazy_static::lazy_static;
+use rocket::{get, launch, post, Route, routes, State};
+#[cfg(debug_assertions)]
+use rocket::{response::Redirect, uri};
 #[cfg(not(debug_assertions))]
 use rocket::fs::NamedFile;
 #[cfg(not(debug_assertions))]
 use rocket::response::status::NotFound;
-use rocket::{get, launch, post, routes, Route, State};
-#[cfg(debug_assertions)]
-use rocket::{response::Redirect, uri};
 use rocket_cors::CorsOptions;
 use rocket_sync_db_pools::database;
 
@@ -75,7 +75,7 @@ async fn route_post_graphql(connection: DbConn, request: GraphQLRequest, schema:
 
 #[cfg(debug_assertions)]
 fn gather_routes() -> Vec<Route> {
-    routes![route_index, route_graphiql, route_post_graphql]
+    routes![route_index, route_post_graphql, route_graphiql]
 }
 
 #[cfg(not(debug_assertions))]
