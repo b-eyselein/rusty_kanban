@@ -3,12 +3,15 @@ use juniper::{graphql_object, FieldResult};
 
 use crate::graphql::{on_graphql_error, MyGraphQLContext};
 use crate::model::board::{insert_board, select_boards_for_projects, Board};
+use crate::model::slot::insert_slots;
 
 #[derive(Debug, Queryable)]
 pub struct Project {
     id: i32,
     title: String,
 }
+
+const DEFAULT_SLOT_NAMES: [&str; 4] = ["Planned", "In Process", "Ready to test", "Complete"];
 
 // GraphQL
 
@@ -45,12 +48,24 @@ impl std::ops::Deref for ProjectMutations {
 
 #[graphql_object(Context = MyGraphQLContext)]
 impl ProjectMutations {
-    pub async fn create_board(&self, title: String, context: &MyGraphQLContext) -> FieldResult<i32> {
+    pub async fn create_board(&self, title: String, with_default_slots: Option<bool>, context: &MyGraphQLContext) -> FieldResult<i32> {
         let project_id = self.id;
+
+        let with_default_slots = with_default_slots.unwrap_or(false);
 
         context
             .connection
-            .run(move |c| insert_board(c, &project_id, &title))
+            .run(move |c| {
+                c.transaction::<_, diesel::result::Error, _>(|| {
+                    let board_id = insert_board(c, &project_id, &title)?;
+
+                    if with_default_slots {
+                        insert_slots(c, &board_id, &DEFAULT_SLOT_NAMES)?;
+                    }
+
+                    Ok(board_id)
+                })
+            })
             .await
             .map_err(|error| on_graphql_error(error, "Could not create board!"))
     }

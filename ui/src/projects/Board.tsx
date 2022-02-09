@@ -27,11 +27,11 @@ export function Board({boardId, slots, onDataUpdate}: IProps): JSX.Element {
     <>
       <div className="columns">
 
-        {slots.map((slot) => <div className="column is-3-desktop" key={slot.id}>
+        {slots.map((slot) => <div className="column is-2-desktop" key={slot.id}>
           <Slot slot={slot} onDataUpdate={onDataUpdate}/>
         </div>)}
 
-        <div className="column is-3-desktop">
+        <div className="column is-2-desktop">
           <button type="button" className="button is-link is-fullwidth" onClick={() => setShowNewSlotFormModal(true)}>
             <AiOutlinePlus/>
           </button>

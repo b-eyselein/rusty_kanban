@@ -89,6 +89,17 @@ pub fn insert_slot(conn: &PgConnection, the_board_id: &i32, the_title: &str) -> 
         .get_result(conn)
 }
 
+pub fn insert_slots(conn: &PgConnection, the_board_id: &i32, titles: &[&str]) -> QueryResult<usize> {
+    use crate::schema::slots::dsl::*;
+
+    let values = titles
+        .iter()
+        .map(|the_title| (board_id.eq(the_board_id), title.eq(*the_title)))
+        .collect::<Vec<_>>();
+
+    diesel::insert_into(slots).values(values).execute(conn)
+}
+
 pub fn update_slot_title(conn: &PgConnection, the_id: &i32, new_title: &str) -> QueryResult<String> {
     use crate::schema::slots::dsl::*;
 

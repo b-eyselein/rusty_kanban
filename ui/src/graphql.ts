@@ -123,6 +123,7 @@ export type ProjectMutations = {
 
 export type ProjectMutationsCreateBoardArgs = {
   title: Scalars['String'];
+  withDefaultSlots?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -200,6 +201,7 @@ export type RenameProjectMutation = { __typename?: 'Mutation', projectMutations?
 export type CreateBoardMutationVariables = Exact<{
   projectId: Scalars['Int'];
   title: Scalars['String'];
+  withDefaultSlots?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
@@ -396,9 +398,9 @@ export type RenameProjectMutationHookResult = ReturnType<typeof useRenameProject
 export type RenameProjectMutationResult = Apollo.MutationResult<RenameProjectMutation>;
 export type RenameProjectMutationOptions = Apollo.BaseMutationOptions<RenameProjectMutation, RenameProjectMutationVariables>;
 export const CreateBoardDocument = gql`
-    mutation CreateBoard($projectId: Int!, $title: String!) {
+    mutation CreateBoard($projectId: Int!, $title: String!, $withDefaultSlots: Boolean) {
   projectMutations(id: $projectId) {
-    createBoard(title: $title)
+    createBoard(title: $title, withDefaultSlots: $withDefaultSlots)
   }
 }
     `;
@@ -419,6 +421,7 @@ export type CreateBoardMutationFn = Apollo.MutationFunction<CreateBoardMutation,
  *   variables: {
  *      projectId: // value for 'projectId'
  *      title: // value for 'title'
+ *      withDefaultSlots: // value for 'withDefaultSlots'
  *   },
  * });
  */

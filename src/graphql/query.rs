@@ -10,7 +10,7 @@ impl Query {
     pub async fn projects(context: &MyGraphQLContext) -> FieldResult<Vec<Project>> {
         context
             .connection
-            .run(|c| select_all_projects(&c))
+            .run(|c| select_all_projects(c))
             .await
             .map_err(|error| on_graphql_error(error, "TODO!"))
     }

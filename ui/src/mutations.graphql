@@ -12,9 +12,9 @@ mutation RenameProject($projectId: Int!, $newTitle: String!) {
 
 # board
 
-mutation CreateBoard($projectId: Int!, $title: String!) {
+mutation CreateBoard($projectId: Int!, $title: String!, $withDefaultSlots: Boolean) {
   projectMutations(id: $projectId) {
-    createBoard(title: $title)
+    createBoard(title: $title, withDefaultSlots: $withDefaultSlots)
   }
 }
 

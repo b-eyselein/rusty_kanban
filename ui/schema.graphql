@@ -37,7 +37,7 @@ type Project {
 }
 
 type ProjectMutations {
-  createBoard(title: String!): Int!
+  createBoard(title: String!, withDefaultSlots: Boolean): Int!
   rename(newTitle: String!): String!
 }
 

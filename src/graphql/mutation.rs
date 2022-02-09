@@ -27,7 +27,7 @@ impl Mutation {
             .await
             .map_err(|error| on_graphql_error(error, &format!("Could not find project with id {id}!")))?;
 
-        Ok(maybe_project.map(|p| ProjectMutations(p)))
+        Ok(maybe_project.map(ProjectMutations))
     }
 
     pub async fn board_mutations(id: i32, context: &MyGraphQLContext) -> FieldResult<Option<BoardMutations>> {
@@ -37,7 +37,7 @@ impl Mutation {
             .await
             .map_err(|error| on_graphql_error(error, &format!("Could not find board with id {id}!")))?;
 
-        Ok(maybe_board.map(|b| BoardMutations(b)))
+        Ok(maybe_board.map(BoardMutations))
     }
 
     pub async fn slot_mutations(id: i32, context: &MyGraphQLContext) -> FieldResult<Option<SlotMutations>> {
@@ -47,7 +47,7 @@ impl Mutation {
             .await
             .map_err(|error| on_graphql_error(error, &format!("Could not find slot with id {id}!")))?;
 
-        Ok(maybe_slot.map(|s| SlotMutations(s)))
+        Ok(maybe_slot.map(SlotMutations))
     }
 
     pub async fn card_mutations(id: i32, context: &MyGraphQLContext) -> FieldResult<Option<CardMutations>> {
@@ -57,7 +57,7 @@ impl Mutation {
             .await
             .map_err(|error| on_graphql_error(error, &format!("Could not find card with id {id}")))?;
 
-        Ok(maybe_card.map(|c| CardMutations(c)))
+        Ok(maybe_card.map(CardMutations))
     }
 
     pub async fn task_mutations(id: i32, context: &MyGraphQLContext) -> FieldResult<Option<TaskMutations>> {
@@ -67,6 +67,6 @@ impl Mutation {
             .await
             .map_err(|error| on_graphql_error(error, &format!("Could not find task with id {id}")))?;
 
-        Ok(maybe_task.map(|t| TaskMutations(t)))
+        Ok(maybe_task.map(TaskMutations))
     }
 }
