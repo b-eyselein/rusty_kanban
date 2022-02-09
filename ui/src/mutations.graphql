@@ -1,3 +1,5 @@
+# project
+
 mutation CreateProject($title: String!) {
   createProject(title: $title)
 }
@@ -7,6 +9,8 @@ mutation RenameProject($projectId: Int!, $newTitle: String!) {
     rename(newTitle: $newTitle)
   }
 }
+
+# board
 
 mutation CreateBoard($projectId: Int!, $title: String!) {
   projectMutations(id: $projectId) {
@@ -20,6 +24,8 @@ mutation RenameBoards($boardId: Int!, $newTitle: String!) {
   }
 }
 
+# slot
+
 mutation CreateSlot($boardId: Int!, $title: String!) {
   boardMutations(id: $boardId) {
     createSlot(title: $title)
@@ -31,6 +37,8 @@ mutation RenameSlot($slotId: Int!, $newTitle: String!) {
     rename(newTitle: $newTitle)
   }
 }
+
+# card
 
 mutation CreateCard($slotId: Int!, $title: String!) {
   slotMutations(id: $slotId) {
@@ -44,14 +52,28 @@ mutation RenameCard($cardId: Int!, $newTitle: String!) {
   }
 }
 
-mutation CreateTask($cardId: Int!, $content: String!) {
+mutation MoveCard($cardId: Int!, $newSlotId: Int!) {
   cardMutations(id: $cardId) {
-    createTask(content: $content)
+    moveSlot(newSlotId: $newSlotId)
   }
 }
 
-mutation UpdateTaskContent($taskId: Int!, $newTitle: String!) {
+# task
+
+mutation CreateTask($cardId: Int!, $title: String!) {
+  cardMutations(id: $cardId) {
+    createTask(title: $title)
+  }
+}
+
+mutation RenameTask($taskId: Int!, $newTitle: String!) {
   taskMutations(id: $taskId) {
     update(newTitle: $newTitle)
+  }
+}
+
+mutation FinishTask($taskId: Int!) {
+  taskMutations(id: $taskId) {
+    finish
   }
 }

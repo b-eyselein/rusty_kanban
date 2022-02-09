@@ -1,26 +1,16 @@
 use diesel::prelude::*;
-use juniper::{graphql_object, FieldResult};
+use juniper::{graphql_object, FieldResult, GraphQLObject};
 
 use crate::graphql::{on_graphql_error, MyGraphQLContext};
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Queryable, GraphQLObject)]
 pub struct Task {
     id: i32,
     title: String,
+    finished: bool,
 }
 
 // GraphQL
-
-#[graphql_object(/*Context = MyGraphQLContext*/)]
-impl Task {
-    pub fn id(&self) -> &i32 {
-        &self.id
-    }
-
-    pub fn title(&self) -> &str {
-        &self.title
-    }
-}
 
 pub struct TaskMutations(pub Task);
 
@@ -43,6 +33,16 @@ impl TaskMutations {
             .await
             .map_err(|error| on_graphql_error(error, &format!("Could not update title of task with id {task_id}")))
     }
+
+    pub async fn finish(&self, context: &MyGraphQLContext) -> FieldResult<bool> {
+        let task_id = self.id;
+
+        context
+            .connection
+            .run(move |c| update_task_finished(c, &task_id, true))
+            .await
+            .map_err(|error| on_graphql_error(error, &format!("Could not finish task with id {task_id}")))
+    }
 }
 
 // Queries
@@ -50,13 +50,13 @@ impl TaskMutations {
 pub fn select_tasks_for_card(conn: &PgConnection, the_card_id: &i32) -> QueryResult<Vec<Task>> {
     use crate::schema::tasks::dsl::*;
 
-    tasks.filter(card_id.eq(the_card_id)).select((id, title)).load(conn)
+    tasks.filter(card_id.eq(the_card_id)).select((id, title, finished)).load(conn)
 }
 
 pub fn select_task(conn: &PgConnection, the_id: &i32) -> QueryResult<Option<Task>> {
     use crate::schema::tasks::dsl::*;
 
-    tasks.find(the_id).select((id, title)).first(conn).optional()
+    tasks.find(the_id).select((id, title, finished)).first(conn).optional()
 }
 
 pub fn insert_task(conn: &PgConnection, the_card_id: &i32, the_title: &str) -> QueryResult<i32> {
@@ -72,4 +72,13 @@ pub fn update_task_title(conn: &PgConnection, the_id: &i32, new_title: &str) -> 
     use crate::schema::tasks::dsl::*;
 
     diesel::update(tasks.find(the_id)).set(title.eq(new_title)).returning(title).get_result(conn)
+}
+
+pub fn update_task_finished(conn: &PgConnection, the_id: &i32, new_value: bool) -> QueryResult<bool> {
+    use crate::schema::tasks::dsl::*;
+
+    diesel::update(tasks.find(the_id))
+        .set(finished.eq(new_value))
+        .returning(finished)
+        .get_result(conn)
 }

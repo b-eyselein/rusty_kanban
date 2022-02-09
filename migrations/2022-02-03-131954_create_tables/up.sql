@@ -1,5 +1,7 @@
 -- Your SQL goes here
 
+-- FIXME: add more foreign keys to make illegal move of cards not possible!
+
 create table if not exists users (
   username varchar(100) primary key,
   pw_hash  varchar(255) not null
@@ -26,7 +28,6 @@ create table if not exists slots (
   unique (board_id, title)
 );
 
-
 create table if not exists cards (
   id      serial primary key,
   title   varchar(255) not null,
@@ -36,9 +37,10 @@ create table if not exists cards (
 );
 
 create table if not exists tasks (
-  id      serial primary key,
-  title   varchar(255) not null,
-  card_id integer      not null references cards (id) on update cascade on delete cascade,
+  id       serial primary key,
+  title    varchar(255) not null,
+  finished boolean      not null default false,
+  card_id  integer      not null references cards (id) on update cascade on delete cascade,
 
   unique (card_id, title)
 );

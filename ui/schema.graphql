@@ -16,7 +16,8 @@ type Card {
 }
 
 type CardMutations {
-  createTask(content: String!): Int!
+  createTask(title: String!): Int!
+  moveSlot(newSlotId: Int!): Int!
   rename(newTitle: String!): String!
 }
 
@@ -57,10 +58,12 @@ type SlotMutations {
 }
 
 type Task {
+  finished: Boolean!
   id: Int!
   title: String!
 }
 
 type TaskMutations {
+  finish: Boolean!
   update(newTitle: String!): String!
 }

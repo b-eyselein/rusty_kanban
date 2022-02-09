@@ -46,12 +46,12 @@ impl std::ops::Deref for CardMutations {
 
 #[graphql_object(Context = MyGraphQLContext)]
 impl CardMutations {
-    pub async fn create_task(&self, content: String, context: &MyGraphQLContext) -> FieldResult<i32> {
+    pub async fn create_task(&self, title: String, context: &MyGraphQLContext) -> FieldResult<i32> {
         let card_id = self.id;
 
         context
             .connection
-            .run(move |c| insert_task(c, &card_id, &content))
+            .run(move |c| insert_task(c, &card_id, &title))
             .await
             .map_err(|error| on_graphql_error(error, &format!("Could not insert task for card {card_id}")))
     }
@@ -64,6 +64,16 @@ impl CardMutations {
             .run(move |c| update_card_title(c, &card_id, &new_title))
             .await
             .map_err(|error| on_graphql_error(error, &format!("Could not update title for card {card_id}")))
+    }
+
+    pub async fn move_slot(&self, new_slot_id: i32, context: &MyGraphQLContext) -> FieldResult<i32> {
+        let card_id = self.id;
+
+        context
+            .connection
+            .run(move |c| update_card_slot(c, &card_id, &new_slot_id))
+            .await
+            .map_err(|error| on_graphql_error(error, &format!("Could not move card with id {card_id} to new slot with id {new_slot_id}")))
     }
 }
 
@@ -94,4 +104,13 @@ pub fn update_card_title(conn: &PgConnection, the_id: &i32, new_title: &str) -> 
     use crate::schema::cards::dsl::*;
 
     diesel::update(cards.find(the_id)).set(title.eq(new_title)).returning(title).get_result(conn)
+}
+
+pub fn update_card_slot(conn: &PgConnection, the_id: &i32, new_slot_id: &i32) -> QueryResult<i32> {
+    use crate::schema::cards::dsl::*;
+
+    diesel::update(cards.find(the_id))
+        .set(slot_id.eq(new_slot_id))
+        .returning(slot_id)
+        .get_result(conn)
 }
